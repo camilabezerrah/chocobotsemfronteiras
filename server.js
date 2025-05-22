@@ -10,24 +10,24 @@ import { fileURLToPath } from 'url';
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Necessário para trabalhar com __dirname em ESModules
+// __dirname para ESModules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Servir arquivos estáticos da pasta 'public'
+// Servir frontend (se estiver na pasta public)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Instância do modelo Gemini Pro
+// Instanciar modelo Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-// Funções disponíveis para function calling
+// Funções auxiliares para Function Calling
 function getCurrentTime() {
   return { currentTime: new Date().toLocaleString('pt-BR') };
 }
@@ -54,7 +54,12 @@ const availableFunctions = {
   getWeather,
 };
 
-// Endpoint de chat
+// ✅ Rota básica para testar o backend
+app.get('/', (req, res) => {
+  res.send('✅ Backend do Chatbot está online!');
+});
+
+// Endpoint principal do chatbot
 app.post('/chat', async (req, res) => {
   const { message, historico } = req.body;
 
@@ -84,7 +89,7 @@ app.post('/chat', async (req, res) => {
         ],
       },
     ],
-    history: historico,
+    history: historico || [],
   });
 
   try {
@@ -117,12 +122,12 @@ app.post('/chat', async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Erro no backend:', error);
+    console.error('❌ Erro no backend:', error);
     res.status(500).json({ resposta: 'Erro interno no servidor.', historico: [] });
   }
 });
 
 // Iniciar servidor
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`🚀 Servidor rodando em http://localhost:${port}`);
 });
