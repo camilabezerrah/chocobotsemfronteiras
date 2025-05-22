@@ -71,3 +71,14 @@ Certifique-se de ter o **Node.js** instalado. Depois, instale as dependências d
 
 ```bash
 npm install
+
+## 🌐 Deploy
+
+- **Frontend:** https://meu-chatbot-frontend.vercel.app
+- **Backend (Render):** https://chatbot-backend.onrender.com
+
+### 🔧 Como foi feito o deploy
+
+1. Backend hospedado em Render.com com variáveis de ambiente configuradas.
+2. Frontend conectado ao backend via URL pública.
+3. Código-fonte disponível em [GitHub](https://github.com/usuario/projeto-chatbot).
