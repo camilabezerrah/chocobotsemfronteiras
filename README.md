@@ -74,7 +74,6 @@ npm install
 
 ## 🌐 Deploy
 
-- **Frontend:** https://meu-chatbot-frontend.vercel.app
 - **Backend (Render):** https://chatbot-backend.onrender.com
 
 ### 🔧 Como foi feito o deploy
