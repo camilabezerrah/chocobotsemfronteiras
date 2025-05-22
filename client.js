@@ -18,11 +18,11 @@ document.getElementById('send-btn').addEventListener('click', async () => {
   sendBtn.disabled = true;
 
   try {
-    const res = await fetch('http://localhost:3000/chat', {
+    const res = await fetch('https://chocobotsemfronteiras.onrender.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: userInput, historico: chatHistory })
-    });    
+    });
 
     if (!res.ok) {
       throw new Error(`Erro HTTP: ${res.status}`);
