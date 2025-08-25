@@ -16,14 +16,14 @@ const port = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Servir frontend (se estiver na pasta public)
+// Servir arquivos estáticos (ex. index.html, style.css)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware
+// Middleware para processar requisições JSON
 app.use(cors());
 app.use(bodyParser.json());
 
-// Instanciar modelo Gemini
+// Instanciar modelo Gemini com a chave da API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
@@ -63,6 +63,9 @@ app.get('/', (req, res) => {
 app.post('/chat', async (req, res) => {
   const { message, historico } = req.body;
 
+  console.log("Mensagem recebida: ", message); // Log da mensagem recebida
+
+  // Iniciar chat com o modelo Gemini
   const chat = model.startChat({
     tools: [
       {
@@ -93,15 +96,23 @@ app.post('/chat', async (req, res) => {
   });
 
   try {
+    // Envia a mensagem para o modelo Gemini
     let response = await chat.sendMessage(message);
 
+    console.log("Resposta do modelo Gemini:", response); // Log da resposta
+
+    // Verifica se há chamadas de função
     if (response.functionCalls().length > 0) {
       const funcCall = response.functionCalls()[0];
       const functionName = funcCall.name;
       const args = funcCall.args;
 
+      // Chama a função correspondente (ex: getWeather ou getCurrentTime)
       const result = await availableFunctions[functionName](args);
 
+      console.log(`Resultado da função ${functionName}:`, result); // Log do resultado da função
+
+      // Envia a resposta da função para o modelo Gemini
       const resultFromFunctionCall = await chat.sendMessage([
         {
           functionResponse: {
@@ -111,11 +122,13 @@ app.post('/chat', async (req, res) => {
         },
       ]);
 
+      // Retorna a resposta e o histórico atualizado
       res.json({
         resposta: resultFromFunctionCall.response.text(),
         historico: chat.getHistory(),
       });
     } else {
+      // Se não houver chamadas de função, apenas retorna a resposta direta
       res.json({
         resposta: response.response.text(),
         historico: chat.getHistory(),
@@ -127,7 +140,7 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-// Iniciar servidor
+// Iniciar o servidor
 app.listen(port, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${port}`);
 });

@@ -1,10 +1,14 @@
 /* Estiliza o corpo da página */
 body {
     font-family: Arial, sans-serif;
-    background-color: #9e775b;
+    background-color: #3E2723;
     margin: 0;
     padding: 20px;
     text-align: center;
+}
+
+h1{
+    color: rgb(243, 243, 243);
 }
 
 /* Estiliza o container do chat */

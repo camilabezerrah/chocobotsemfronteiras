@@ -7,9 +7,11 @@ document.getElementById('send-btn').addEventListener('click', async () => {
 
   if (userInput === '') return;
 
+  // Mostra a mensagem do usuário
   chatBox.innerHTML += `<div class="user-msg"><strong>Você:</strong> ${userInput}</div>`;
   document.getElementById('user-input').value = '';
 
+  // Cria a mensagem de "digitando" do chatbot
   const loadingMsg = document.createElement('div');
   loadingMsg.classList.add('bot-msg');
   loadingMsg.textContent = "ChocoBot está digitando...";
@@ -18,7 +20,7 @@ document.getElementById('send-btn').addEventListener('click', async () => {
   sendBtn.disabled = true;
 
   try {
-    const res = await fetch('https://chocobotsemfronteiras.onrender.com', {
+    const res = await fetch('https://chocobotsemfronteiras.onrender.com/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: userInput, historico: chatHistory })
@@ -30,11 +32,13 @@ document.getElementById('send-btn').addEventListener('click', async () => {
 
     const data = await res.json();
 
-    loadingMsg.remove();
+    loadingMsg.remove(); // Remove o "digitando"
 
+    // Se houver resposta, mostre-a
     chatBox.innerHTML += `<div class="bot-msg"><strong>ChocoBot:</strong> ${data.resposta}</div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
     chatHistory = data.historico;
+
   } catch (error) {
     console.error(error);
     loadingMsg.textContent = "❌ Oops! Algo deu errado. Tente novamente.";
