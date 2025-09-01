@@ -1,3 +1,5 @@
+// server.js
+
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -7,27 +9,32 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Configura variáveis de ambiente
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// __dirname para ESModules
+// Compatibilidade __dirname com ESModules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Servir arquivos estáticos (ex. index.html, style.css)
-app.use(express.static(path.join(__dirname, 'public')));
+// ✅ CORS – Libera acesso do frontend (Vercel, Netlify, etc.)
+app.use(cors({
+  origin: '*', // Em produção, substitua por: ['https://chocobotsemfronteiras.netlify.app/']
+}));
 
-// Middleware para processar requisições JSON
-app.use(cors());
+// ✅ Middleware para JSON
 app.use(bodyParser.json());
 
-// Instanciar modelo Gemini com a chave da API
+// ✅ Servir arquivos estáticos (caso use frontend no mesmo servidor)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ✅ Instanciar modelo Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-// Funções auxiliares para Function Calling
+// ✅ Funções para Function Calling
 function getCurrentTime() {
   return { currentTime: new Date().toLocaleString('pt-BR') };
 }
@@ -45,6 +52,7 @@ async function getWeather(args) {
       description: res.data.weather[0].description,
     };
   } catch (err) {
+    console.error("Erro ao obter clima:", err.message);
     return { error: 'Erro ao obter o clima: ' + err.message };
   }
 }
@@ -54,52 +62,50 @@ const availableFunctions = {
   getWeather,
 };
 
-// ✅ Rota básica para testar o backend
+// ✅ Rota para verificação no navegador ou Render
 app.get('/', (req, res) => {
   res.send('✅ Backend do Chatbot está online!');
 });
 
-// Endpoint principal do chatbot
+// ✅ Endpoint principal da aplicação
 app.post('/chat', async (req, res) => {
   const { message, historico } = req.body;
 
-  console.log("Mensagem recebida: ", message); // Log da mensagem recebida
-
-  // Iniciar chat com o modelo Gemini
-  const chat = model.startChat({
-    tools: [
-      {
-        functionDeclarations: [
-          {
-            name: 'getCurrentTime',
-            description: 'Obtém a data e hora atuais.',
-            parameters: { type: 'object', properties: {} },
-          },
-          {
-            name: 'getWeather',
-            description: 'Obtém a previsão do tempo para uma cidade.',
-            parameters: {
-              type: 'object',
-              properties: {
-                location: {
-                  type: 'string',
-                  description: 'Cidade desejada, ex: "São Paulo, BR"',
-                },
-              },
-              required: ['location'],
-            },
-          },
-        ],
-      },
-    ],
-    history: historico || [],
-  });
+  if (!message || message.trim() === '') {
+    return res.status(400).json({ resposta: 'Mensagem inválida.', historico: [] });
+  }
 
   try {
-    // Envia a mensagem para o modelo Gemini
-    let response = await chat.sendMessage(message);
+    const chat = model.startChat({
+      tools: [
+        {
+          functionDeclarations: [
+            {
+              name: 'getCurrentTime',
+              description: 'Obtém a data e hora atuais.',
+              parameters: { type: 'object', properties: {} },
+            },
+            {
+              name: 'getWeather',
+              description: 'Obtém a previsão do tempo para uma cidade.',
+              parameters: {
+                type: 'object',
+                properties: {
+                  location: {
+                    type: 'string',
+                    description: 'Cidade desejada, ex: "São Paulo, BR"',
+                  },
+                },
+                required: ['location'],
+              },
+            },
+          ],
+        },
+      ],
+      history: historico || [],
+    });
 
-    console.log("Resposta do modelo Gemini:", response); // Log da resposta
+    let response = await chat.sendMessage(message);
 
     // Verifica se há chamadas de função
     if (response.functionCalls().length > 0) {
@@ -107,12 +113,12 @@ app.post('/chat', async (req, res) => {
       const functionName = funcCall.name;
       const args = funcCall.args;
 
-      // Chama a função correspondente (ex: getWeather ou getCurrentTime)
+      if (!availableFunctions[functionName]) {
+        return res.status(400).json({ resposta: `Função ${functionName} não implementada.`, historico: [] });
+      }
+
       const result = await availableFunctions[functionName](args);
 
-      console.log(`Resultado da função ${functionName}:`, result); // Log do resultado da função
-
-      // Envia a resposta da função para o modelo Gemini
       const resultFromFunctionCall = await chat.sendMessage([
         {
           functionResponse: {
@@ -122,25 +128,28 @@ app.post('/chat', async (req, res) => {
         },
       ]);
 
-      // Retorna a resposta e o histórico atualizado
-      res.json({
+      return res.json({
         resposta: resultFromFunctionCall.response.text(),
         historico: chat.getHistory(),
       });
-    } else {
-      // Se não houver chamadas de função, apenas retorna a resposta direta
-      res.json({
-        resposta: response.response.text(),
-        historico: chat.getHistory(),
-      });
     }
+
+    // Resposta direta
+    res.json({
+      resposta: response.response.text(),
+      historico: chat.getHistory(),
+    });
+
   } catch (error) {
-    console.error('❌ Erro no backend:', error);
-    res.status(500).json({ resposta: 'Erro interno no servidor.', historico: [] });
+    console.error('❌ Erro no backend:', error.message);
+    res.status(500).json({
+      resposta: 'Erro interno no servidor. Tente novamente mais tarde.',
+      historico: [],
+    });
   }
 });
 
-// Iniciar o servidor
+// ✅ Inicialização do servidor
 app.listen(port, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${port}`);
 });

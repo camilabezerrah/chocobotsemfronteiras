@@ -1,83 +1,89 @@
-# ChocoBot - Chatbot Inteligente com Function Calling
+# 🤖 ChocoBot - Chatbot Inteligente com Function Calling
 
-ChocoBot é um chatbot inteligente que utiliza a API **Google Gemini** para fornecer respostas naturais e úteis, além de executar funções do backend, como obter a data/hora atual e a previsão do tempo. Ele também interage com os usuários por meio de um frontend simples.
+**ChocoBot** é um chatbot inteligente que utiliza a API **Google Gemini** para fornecer respostas naturais e úteis, além de executar funções do backend, como obter a data/hora atual e a previsão do tempo. Ele também possui memória de conversas, tratamento de erros e uma interface simples e responsiva.
+
+---
 
 ## 🚀 Funcionalidades
 
 ### 1. **Function Calling**
-O recurso de **Function Calling** da API Gemini permite que o chatbot execute funções reais do backend, como obter a data/hora ou buscar informações de previsão do tempo, ao invés de apenas responder com texto. Isso torna o bot mais inteligente e capaz de realizar tarefas mais avançadas.
+O recurso de **Function Calling** da API Gemini permite que o chatbot execute funções reais do backend, como obter a hora ou clima, tornando-o mais útil e prático.
 
 #### Como Funciona?
-- O chatbot recebe uma mensagem do usuário.
-- Se a mensagem requisitar uma ação que pode ser realizada com uma função específica (ex: obter hora ou clima), o bot chama a função apropriada.
-- O backend executa a função, obtém o resultado e o retorna para o Gemini.
-- O Gemini utiliza o resultado para gerar uma resposta natural e relevante.
+- O usuário envia uma mensagem.
+- O Gemini identifica se uma função precisa ser chamada.
+- O backend executa a função.
+- A resposta final é enviada ao usuário com base nos dados retornados.
 
-Exemplo de uma interação:
-- Usuário: "Que horas são?"
-- Bot: "Agora são 15:23 de 08/05/2025."
+#### Exemplo:
+> Usuário: "Que horas são?"  
+> Bot: "Agora são 15:23 de 08/05/2025."
+
+---
 
 ### 2. **Funções Implementadas**
 
 #### 🕒 `getCurrentTime`
-Esta função retorna a data e hora atual no formato brasileiro.
-
-##### Descrição:
-- A função `getCurrentTime` busca e retorna a hora atual do servidor.
-
-##### Exemplo de uso:
-- **Entrada**: "Que horas são?"
-- **Saída**: "Agora são 15:23 de 08/05/2025."
+- Retorna a data e hora atual no formato brasileiro.
 
 #### 🌤️ `getWeather`
-Esta função consulta a API OpenWeather para fornecer a previsão do tempo para uma cidade especificada.
-
-##### Descrição:
-- A função `getWeather` aceita o nome de uma cidade e retorna a temperatura atual e a descrição do clima.
-
-##### Exemplo de uso:
-- **Entrada**: "Como está o clima em São Paulo?"
-- **Saída**: "A previsão para São Paulo é de 25°C com céu limpo."
+- Consulta a API OpenWeather para mostrar a previsão do tempo de uma cidade específica.
+- Exemplo: "A previsão para São Paulo é de 25°C com céu limpo."
 
 ---
 
 ## 🔁 Histórico de Conversa
 
-Agora o **ChocoBot** lembra das mensagens anteriores para manter uma conversa mais natural. O frontend envia o histórico ao backend, que reenvia à API **Gemini**. Isso permite que o bot tenha uma memória durante a interação, proporcionando um diálogo contínuo e sem necessidade de reiniciar a conversa a cada nova mensagem.
+ChocoBot mantém uma **memória temporária** durante a conversa, enviando o histórico ao backend, que o repassa à API Gemini, permitindo interações mais contextuais e naturais.
 
 ---
 
 ## 🛡️ Tratamento de Erros
 
-Se houver falha na conexão com a API, o usuário verá uma mensagem amigável na interface, evitando travamentos ou mensagens genéricas. Isso melhora a experiência do usuário, ao mesmo tempo que permite que o sistema se recupere e continue funcionando sem grandes interrupções.
-
-Por exemplo:
-- Caso a API do **Gemini** ou a API de clima não esteja acessível, o bot exibirá uma mensagem amigável ao usuário, como "Oops! Algo deu errado. Tente novamente."
+Erros de API são tratados com mensagens amigáveis, evitando falhas abruptas.  
+Exemplo: "Oops! Algo deu errado. Tente novamente."
 
 ---
 
 ## 💬 Indicador de Carregamento
 
-Enquanto o **ChocoBot** está processando a resposta, um indicador de "digitando..." será exibido para simular uma conversa real. Isso ajuda a melhorar a experiência do usuário, tornando a interação mais fluida e menos frustrante, como se fosse uma conversa com uma pessoa real.
+Enquanto processa uma resposta, o bot exibe "digitando..." para simular uma conversa real, melhorando a **UX**.
 
 ---
 
-## 🔧 Como Configurar
-
-Para rodar o ChocoBot em sua máquina local, siga os seguintes passos:
-
-### 1. Instale as Dependências
-Certifique-se de ter o **Node.js** instalado. Depois, instale as dependências do projeto:
-
-```bash
-npm install
-
 ## 🌐 Deploy
 
-- **Backend (Render):** https://chatbot-backend.onrender.com
+- **Backend (Render):** [https://chatbot-backend.onrender.com](https://chocobotsemfronteiras.onrender.com)
+- **Frontend (Netlify/Vercel):** *(https://chocobotsemfronteiras.netlify.app/)
+- **Repositório GitHub:** [https://github.com/camilabezerrah/chocobotsemfronteiras](https://github.com/camilabezerrah/chocobotsemfronteiras)
 
-### 🔧 Como foi feito o deploy
+---
 
-1. Backend hospedado em Render.com com variáveis de ambiente configuradas.
-2. Frontend conectado ao backend via URL pública.
-3. Código-fonte disponível em [GitHub](https://github.com/camilabezerrah/chocobotsemfronteiras).
+## 🔧 Como Rodar Localmente
+
+### Pré-requisitos
+- Node.js instalado
+
+### Passos:
+```bash
+npm install
+npm run dev
+
+## Plano de Melhorias (B3.P1.A6)
+
+### 🐞 Bugs Críticos (Prioridade Máxima)
+- [ ] Bot não responde por erro de API → Verificar chave da Gemini e conexão Render
+- [ ] Histórico visível para todos → Implementar userId com localStorage + filtro por usuário
+- [ ] Layout quebrado no celular → Melhorar responsividade com media queries
+- [ ] Logs de erro visíveis na UI → Remover console.log da interface
+
+### 💡 Refinamentos e UX
+- [ ] Melhorar system instruction para manter foco em autocuidado
+- [ ] Respostas muito longas → Ajustar prompt para ser mais direto
+- [ ] Permitir renomear histórico de forma intuitiva
+- [ ] Mensagem personalizada para erros de API
+
+### ✅ Pontos Fortes (Manter!)
+- [x] Function calling funcionando (getTime, getWeather)
+- [x] Design geral agradável
+- [x] Indicação de "digitando..." melhora a experiência
