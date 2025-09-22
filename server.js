@@ -8,18 +8,36 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 
+// Models
 import Chat from './models/Chat.js';
 import Message from './models/Message.js';
 import SystemInstruction from './models/SystemInstruction.js';
 
+// Config .env
 dotenv.config();
 
+// App setup
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Diretório __dirname (modo ESModules)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Middleware
+app.use(cors({ origin: '*' }));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Conexão MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('✅ MongoDB conectado!'))
+.catch(err => console.error('❌ Erro ao conectar MongoDB:', err));
+
+// Middleware de autenticação para admin
 const checkAdminAuth = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader;
@@ -30,19 +48,11 @@ const checkAdminAuth = (req, res, next) => {
   next();
 };
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('✅ MongoDB conectado!'))
-  .catch(err => console.error('❌ Erro ao conectar MongoDB:', err));
-
-app.use(cors({ origin: '*' }));
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
+// Google Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
+// Funções externas disponíveis ao bot
 function getCurrentTime() {
   return { currentTime: new Date().toLocaleString('pt-BR') };
 }
@@ -70,6 +80,9 @@ const availableFunctions = {
   getWeather,
 };
 
+// ------------------------ ROTAS ADMIN ----------------------------
+
+// GET: Estatísticas do chatbot
 app.get('/api/admin/stats', checkAdminAuth, async (req, res) => {
   try {
     const totalConversations = await Chat.countDocuments();
@@ -90,6 +103,7 @@ app.get('/api/admin/stats', checkAdminAuth, async (req, res) => {
   }
 });
 
+// GET: Obter instrução atual do sistema (personalidade do bot)
 app.get('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   try {
     const latestInstruction = await SystemInstruction.findOne().sort({ createdAt: -1 });
@@ -100,6 +114,7 @@ app.get('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   }
 });
 
+// POST: Atualizar instrução do sistema (personalidade do bot)
 app.post('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   const { instruction } = req.body;
   if (!instruction) {
@@ -116,9 +131,13 @@ app.post('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   }
 });
 
+// ------------------------ ROTA PÁGINA PRINCIPAL ----------------------------
+
 app.get('/', (req, res) => {
   res.send('✅ Backend do Chatbot está online!');
 });
+
+// ------------------------ ROTA CHATBOT ----------------------------
 
 app.post('/chat', async (req, res) => {
   const { message, historico } = req.body;
@@ -128,9 +147,11 @@ app.post('/chat', async (req, res) => {
   }
 
   try {
+    // Buscar a instrução do sistema (personalidade)
     const systemInstructionDoc = await SystemInstruction.findOne().sort({ createdAt: -1 });
     const instruction = systemInstructionDoc?.instruction || "Você é um assistente virtual.";
 
+    // Iniciar chat com Gemini
     const chat = model.startChat({
       tools: [
         {
@@ -163,6 +184,7 @@ app.post('/chat', async (req, res) => {
 
     let response = await chat.sendMessage(message);
 
+    // Se o bot fizer uma chamada de função
     if (response.functionCalls().length > 0) {
       const funcCall = response.functionCalls()[0];
       const functionName = funcCall.name;
@@ -189,6 +211,7 @@ app.post('/chat', async (req, res) => {
       });
     }
 
+    // Resposta padrão (sem função)
     res.json({
       resposta: response.response.text(),
       historico: chat.getHistory(),
@@ -202,6 +225,8 @@ app.post('/chat', async (req, res) => {
     });
   }
 });
+
+// ------------------------ INICIAR SERVIDOR ----------------------------
 
 app.listen(port, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${port}`);
