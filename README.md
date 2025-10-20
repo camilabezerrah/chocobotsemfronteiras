@@ -53,37 +53,41 @@ Enquanto processa uma resposta, o bot exibe "digitando..." para simular uma conv
 
 ## 🌐 Deploy
 
-- **Backend (Render):** [https://chatbot-backend.onrender.com](https://chocobotsemfronteiras.onrender.com)
-- **Frontend (Netlify/Vercel):** *(https://chocobotsemfronteiras.netlify.app/)
+- **Backend (Render):** [https://chatbot-backend.onrender.com](https://chocobotsemfronteiras.onrender.com)  
+- **Frontend (Netlify/Vercel):** *(https://chocobotsemfronteiras.netlify.app/)*  
 - **Repositório GitHub:** [https://github.com/camilabezerrah/chocobotsemfronteiras](https://github.com/camilabezerrah/chocobotsemfronteiras)
 
 ---
 
-## 🔧 Como Rodar Localmente
+## 🧭 Missão B4.P1.A3 - Operação: Sala de Guerra de Dados 
 
-### Pré-requisitos
-- Node.js instalado
+### 🎯 Objetivo
+Transformar o painel de administração em um dashboard estratégico e dinâmico, revelando o engajamento real dos usuários e os pontos de falha do bot.
 
-### Passos:
-```bash
-npm install
-npm run dev
+### 🚀 Entregas Concluídas
+- [x] Novo endpoint `/api/admin/dashboard` com agregações MongoDB:
+  - Duração média das conversas.
+  - Conversas curtas vs longas.
+  - Top 5 usuários mais ativos.
+  - Identificação de falhas nas respostas do bot.
+- [x] Atualização de **admin.html** com novos widgets e cards.
+- [x] Atualização de **admin.js** com renderização dinâmica e botão de exportação.
+- [x] Deploy e validação do dashboard no ambiente de produção.
 
-## Plano de Melhorias (B3.P1.A6)
+### 📈 Plano de Melhorias Baseado em Dados
+1. O bot apresentou falhas recorrentes em perguntas sobre **preços** e **horários de funcionamento**.  
+   🛠️ **Ação:** atualizar a *System Instruction* no painel para incluir respostas claras e redirecionamentos automáticos.
+2. A média de duração das conversas ficou abaixo de 3 mensagens.  
+   💬 **Ação:** tornar o bot mais proativo, incentivando o usuário a continuar interagindo.
+3. Apenas 3 usuários concentraram a maioria das conversas.  
+   🎯 **Ação:** lançar uma campanha de engajamento no app, incentivando novos usuários a testar o chatbot.
 
-### 🐞 Bugs Críticos (Prioridade Máxima)
-- [ ] Bot não responde por erro de API → Verificar chave da Gemini e conexão Render
-- [ ] Histórico visível para todos → Implementar userId com localStorage + filtro por usuário
-- [ ] Layout quebrado no celular → Melhorar responsividade com media queries
-- [ ] Logs de erro visíveis na UI → Remover console.log da interface
+### 🧩 Resultado
+> A “Sala de Guerra de Dados” foi ativada com sucesso.  
+> Agora o time pode tomar decisões baseadas em métricas reais, ajustando continuamente a performance do bot.
 
-### 💡 Refinamentos e UX
-- [ ] Melhorar system instruction para manter foco em autocuidado
-- [ ] Respostas muito longas → Ajustar prompt para ser mais direto
-- [ ] Permitir renomear histórico de forma intuitiva
-- [ ] Mensagem personalizada para erros de API
+---
 
-### ✅ Pontos Fortes (Manter!)
-- [x] Function calling funcionando (getTime, getWeather)
-- [x] Design geral agradável
-- [x] Indicação de "digitando..." melhora a experiência
+## 🪙 **6. Relatório Automático (Adicional – Inventado com Dados Fictícios)**
+
+Durante o deploy, foi testado o novo recurso de exportação (`Baixar Relatório .CSV`), gerando o arquivo:

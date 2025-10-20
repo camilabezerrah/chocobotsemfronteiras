@@ -82,7 +82,7 @@ const availableFunctions = {
 
 // ------------------------ ROTAS ADMIN ----------------------------
 
-// GET: Estatísticas do chatbot
+// GET: Estatísticas básicas
 app.get('/api/admin/stats', checkAdminAuth, async (req, res) => {
   try {
     const totalConversations = await Chat.countDocuments();
@@ -103,7 +103,7 @@ app.get('/api/admin/stats', checkAdminAuth, async (req, res) => {
   }
 });
 
-// GET: Obter instrução atual do sistema (personalidade do bot)
+// GET: Obter instrução atual do sistema
 app.get('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   try {
     const latestInstruction = await SystemInstruction.findOne().sort({ createdAt: -1 });
@@ -114,7 +114,7 @@ app.get('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   }
 });
 
-// POST: Atualizar instrução do sistema (personalidade do bot)
+// POST: Atualizar instrução do sistema
 app.post('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   const { instruction } = req.body;
   if (!instruction) {
@@ -128,6 +128,84 @@ app.post('/api/admin/system-instruction', checkAdminAuth, async (req, res) => {
   } catch (err) {
     console.error('Erro ao salvar nova instrução:', err);
     res.status(500).json({ error: 'Erro ao salvar nova instrução' });
+  }
+});
+
+// ------------------------ DASHBOARD AVANÇADO ----------------------------
+
+app.get('/api/admin/dashboard', checkAdminAuth, async (req, res) => {
+  try {
+    // ======== 1. PROFUNDIDADE DE ENGAJAMENTO ========
+    const engajamento = await Chat.aggregate([
+      {
+        $addFields: {
+          numeroDeMensagens: { $size: "$messages" },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          duracaoMedia: { $avg: "$numeroDeMensagens" },
+          conversasCurtas: {
+            $sum: { $cond: [{ $lte: ["$numeroDeMensagens", 3] }, 1, 0] },
+          },
+          conversasLongas: {
+            $sum: { $cond: [{ $gt: ["$numeroDeMensagens", 3] }, 1, 0] },
+          },
+        },
+      },
+    ]);
+
+    // ======== 2. LEALDADE DO USUÁRIO ========
+    const topUsuarios = await Chat.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+          totalConversas: { $sum: 1 },
+        },
+      },
+      { $sort: { totalConversas: -1 } },
+      { $limit: 5 },
+    ]);
+
+    // ======== 3. ANÁLISE DE FALHAS ========
+    const falhas = await Chat.aggregate([
+      { $unwind: "$messages" },
+      {
+        $match: {
+          "messages.role": "model",
+          "messages.parts.text": {
+            $regex: /(não entendi|não posso ajudar|pode reformular|desculpe|não sei)/i,
+          },
+        },
+      },
+      {
+        $project: {
+          userId: 1,
+          falhaTexto: "$messages.parts.text",
+          createdAt: 1,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $limit: 5 },
+    ]);
+
+    // ======== RESPOSTA FINAL ========
+    res.json({
+      profundidadeDeEngajamento: engajamento[0] || {
+        duracaoMedia: 0,
+        conversasCurtas: 0,
+        conversasLongas: 0,
+      },
+      topUsuarios,
+      analiseDeFalhas: {
+        totalFalhas: falhas.length,
+        exemplos: falhas,
+      },
+    });
+  } catch (err) {
+    console.error("Erro ao gerar dashboard:", err);
+    res.status(500).json({ error: "Erro ao gerar dados do dashboard." });
   }
 });
 

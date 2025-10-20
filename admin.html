@@ -17,26 +17,72 @@
   <div id="admin-content" style="display:none;">
     <h1>Painel de Controle</h1>
 
+    <!-- =======================
+         SEÇÃO: MÉTRICAS GERAIS
+    ========================== -->
     <section id="metrics">
-      <h2>Métricas</h2>
+      <h2>📈 Métricas Gerais</h2>
       <div class="cards">
         <div class="card">
           <h3>Total de Conversas</h3>
           <p id="total-conversations">--</p>
         </div>
+
         <div class="card">
           <h3>Total de Mensagens</h3>
           <p id="total-messages">--</p>
         </div>
+
         <div class="card">
           <h3>Últimas 5 Conversas</h3>
           <ul id="latest-conversations"></ul>
         </div>
       </div>
+
+      <!-- Botão para baixar relatório CSV -->
+      <button id="download-report-btn" style="margin-top: 20px; padding: 10px 20px; font-size: 1rem;">
+        Baixar Relatório .CSV
+      </button>
     </section>
 
+    <!-- =======================
+         SEÇÃO: PROFUNDIDADE DE ENGAJAMENTO
+    ========================== -->
+    <section id="engagement-section">
+      <h2>💬 Profundidade de Engajamento</h2>
+      <div class="card">
+        <p id="avg-conversation-length">Duração Média da Conversa: --</p>
+        <p id="short-conversations">Conversas Curtas (≤ 3 mensagens): --</p>
+        <p id="long-conversations">Conversas Longas (> 3 mensagens): --</p>
+      </div>
+    </section>
+
+    <!-- =======================
+         SEÇÃO: LEALDADE DO USUÁRIO
+    ========================== -->
+    <section id="loyalty-section">
+      <h2>🏅 Top 5 Usuários Mais Ativos</h2>
+      <div class="card">
+        <ul id="top-users"></ul>
+      </div>
+    </section>
+
+    <!-- =======================
+         SEÇÃO: ANÁLISE DE FALHAS
+    ========================== -->
+    <section id="failures-section">
+      <h2>⚠️ Análise de Falhas</h2>
+      <div class="card">
+        <p id="inconclusive-responses">Respostas Inconclusivas: --</p>
+        <ul id="bot-failures"></ul>
+      </div>
+    </section>
+
+    <!-- =======================
+         SEÇÃO: INSTRUÇÃO DO SISTEMA
+    ========================== -->
     <section id="system-instruction-section">
-      <h2>Editar Instrução do Sistema</h2>
+      <h2>🧠 Editar Instrução do Sistema</h2>
       <textarea id="system-instruction-textarea" rows="6" placeholder="Digite a nova instrução do sistema aqui..."></textarea>
       <button id="save-instruction-btn">Salvar Nova Instrução</button>
       <p id="instruction-msg"></p>
