@@ -1,93 +1,120 @@
-# 🤖 ChocoBot - Chatbot Inteligente com Function Calling
-
-**ChocoBot** é um chatbot inteligente que utiliza a API **Google Gemini** para fornecer respostas naturais e úteis, além de executar funções do backend, como obter a data/hora atual e a previsão do tempo. Ele também possui memória de conversas, tratamento de erros e uma interface simples e responsiva.
-
----
-
-## 🚀 Funcionalidades
-
-### 1. **Function Calling**
-O recurso de **Function Calling** da API Gemini permite que o chatbot execute funções reais do backend, como obter a hora ou clima, tornando-o mais útil e prático.
-
-#### Como Funciona?
-- O usuário envia uma mensagem.
-- O Gemini identifica se uma função precisa ser chamada.
-- O backend executa a função.
-- A resposta final é enviada ao usuário com base nos dados retornados.
-
-#### Exemplo:
-> Usuário: "Que horas são?"  
-> Bot: "Agora são 15:23 de 08/05/2025."
+# 🟫🍫 **ChocoBot – Seu Aconchego Digital com IA Personalizável**
+### *“Um chatbot doce, inteligente e feito para evoluir com você.”*
 
 ---
 
-### 2. **Funções Implementadas**
+## 🎥 **Demonstração Visual**
 
-#### 🕒 `getCurrentTime`
-- Retorna a data e hora atual no formato brasileiro.
+>
 
-#### 🌤️ `getWeather`
-- Consulta a API OpenWeather para mostrar a previsão do tempo de uma cidade específica.
-- Exemplo: "A previsão para São Paulo é de 25°C com céu limpo."
+**🔐 Login**  
+![login-demo](./demo/login.gif)
 
----
+**💬 Conversa**  
+![chat-demo](./demo/chat.gif)
 
-## 🔁 Histórico de Conversa
-
-ChocoBot mantém uma **memória temporária** durante a conversa, enviando o histórico ao backend, que o repassa à API Gemini, permitindo interações mais contextuais e naturais.
+**🧠 Personalização do Bot**  
+![settings-demo](./demo/settings.gif)
 
 ---
 
-## 🛡️ Tratamento de Erros
+# 🚀 **Principais Funcionalidades**
 
-Erros de API são tratados com mensagens amigáveis, evitando falhas abruptas.  
-Exemplo: "Oops! Algo deu errado. Tente novamente."
+### 🤖 **IA Personalizável por Usuário**
+Cada pessoa pode definir:
+- Personalidade do bot  
+- Tom de fala  
+- Estilo de resposta  
+- Nível de profundidade  
 
----
-
-## 💬 Indicador de Carregamento
-
-Enquanto processa uma resposta, o bot exibe "digitando..." para simular uma conversa real, melhorando a **UX**.
-
----
-
-## 🌐 Deploy
-
-- **Backend (Render):** [https://chatbot-backend.onrender.com](https://chocobotsemfronteiras.onrender.com)  
-- **Frontend (Netlify/Vercel):** *(https://chocobotsemfronteiras.netlify.app/)*  
-- **Repositório GitHub:** [https://github.com/camilabezerrah/chocobotsemfronteiras](https://github.com/camilabezerrah/chocobotsemfronteiras)
+Tudo salvo e aplicado automaticamente nas próximas sessões.
 
 ---
 
-## 🧭 Missão B4.P1.A3 - Operação: Sala de Guerra de Dados 
+### 🛠️ **Function Calling com Google Gemini**
+ChocoBot executa **funções reais do backend** quando necessário.  
+Funções implementadas:
 
-### 🎯 Objetivo
-Transformar o painel de administração em um dashboard estratégico e dinâmico, revelando o engajamento real dos usuários e os pontos de falha do bot.
+#### 🕒 `getCurrentTime`  
+Retorna data e hora no padrão brasileiro.
 
-### 🚀 Entregas Concluídas
-- [x] Novo endpoint `/api/admin/dashboard` com agregações MongoDB:
-  - Duração média das conversas.
-  - Conversas curtas vs longas.
-  - Top 5 usuários mais ativos.
-  - Identificação de falhas nas respostas do bot.
-- [x] Atualização de **admin.html** com novos widgets e cards.
-- [x] Atualização de **admin.js** com renderização dinâmica e botão de exportação.
-- [x] Deploy e validação do dashboard no ambiente de produção.
-
-### 📈 Plano de Melhorias Baseado em Dados
-1. O bot apresentou falhas recorrentes em perguntas sobre **preços** e **horários de funcionamento**.  
-   🛠️ **Ação:** atualizar a *System Instruction* no painel para incluir respostas claras e redirecionamentos automáticos.
-2. A média de duração das conversas ficou abaixo de 3 mensagens.  
-   💬 **Ação:** tornar o bot mais proativo, incentivando o usuário a continuar interagindo.
-3. Apenas 3 usuários concentraram a maioria das conversas.  
-   🎯 **Ação:** lançar uma campanha de engajamento no app, incentivando novos usuários a testar o chatbot.
-
-### 🧩 Resultado
-> A “Sala de Guerra de Dados” foi ativada com sucesso.  
-> Agora o time pode tomar decisões baseadas em métricas reais, ajustando continuamente a performance do bot.
+#### 🌤️ `getWeather`  
+Obtém clima atual via OpenWeather:  
+> “A previsão para São Paulo é 25°C com céu limpo.”
 
 ---
 
-## 🪙 **6. Relatório Automático (Adicional – Inventado com Dados Fictícios)**
+### 🗂️ **Memória de Conversas**
+O bot mantém o histórico ativo para conversas coerentes e naturais.
 
-Durante o deploy, foi testado o novo recurso de exportação (`Baixar Relatório .CSV`), gerando o arquivo:
+---
+
+### 📊 **Painel Admin Completo**
+- Últimas conversas  
+- Cards com métricas básicas  
+- Editor de System Instruction em tempo real  
+- Interface moderna responsiva  
+
+---
+
+### 🧩 **Títulos de Conversa Gerados Automaticamente**
+Cada conversa recebe um título automático com IA.
+
+---
+
+### 🛡️ **Tratamento de Erros Inteligente**
+Mensagens amigáveis sempre que a API falha:
+> “Oops! Algo deu errado. Tente novamente.”
+
+---
+
+### ✨ **UX Aprimorada**
+- Indicador “digitando...”  
+- Animações suaves  
+- Layout limpo  
+- Totalmente responsivo  
+
+---
+
+# 🧰 **Tech Stack**
+
+### **Backend**
+- 🟢 Node.js  
+- ⚡ Express.js  
+- 🧠 Google Gemini API  
+- 🌦️ OpenWeather API  
+- 🍪 JWT + Login  
+- 🛢️ MongoDB Atlas  
+
+### **Frontend**
+- ⚛️ React / Vite  
+- 🎨 CSS moderno  
+- 🔗 Fetch API  
+
+---
+
+# 🔗 **Links de Demo**
+
+🔹 **Frontend (Netlify/Vercel):**  
+https://chocobotsemfronteiras.netlify.app/
+
+🔹 **Backend (Render):**  
+https://chocobotsemfronteiras.onrender.com
+
+🔹 **Repositório GitHub:**  
+https://github.com/camilabezerrah/chocobotsemfronteiras
+
+---
+
+# 📚 **Como Rodar Localmente**
+
+### **Pré-requisitos**
+- Node.js instalado  
+- Chave da API Gemini  
+- Chave da API OpenWeather  
+- MongoDB Atlas configurado  
+
+### **Passos**
+```bash
+npm install
+npm run dev
